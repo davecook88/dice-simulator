@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <title>My first Three.js app</title>
+        <style>
+            body {
+                display: flex;
+                width: 600px;
+                flex-flow: wrap;
+            }
+            canvas { width: 100%; height: 100% }
+            .canvas-box{
+                width:fit-content;
+                height:fit-content; 
+                position:relative;
+            }
+
+            .text-result {
+                width:fit-content; 
+                position: absolute; 
+                color: white; 
+                left:50%; 
+                top:30%;
+                opacity: 0;
+                margin:0;
+                transition: opacity 0.5s;
+            }
+
+            .text-result.d4{
+                left: 38%;
+                transform: rotate3d(0.8, 1, 0.7, 55deg);
+                font-size: 52px;
+                top: 32%;
+            }
+            .text-result.d6 {
+                left: 46%;
+                top: 33%;
+                font-size:3.5em;
+            }
+            .text-result.d8{
+                left: 44%;
+                transform: rotate3d(1, 0, 0, 15deg);
+                font-size: 50px;
+                top: 25%;
+            }
+            .text-result.d10{
+                left: 48%;
+                font-size: 3em;
+                top: 33%;
+                transform:rotate(79deg);
+            }
+            .text-result.d12 {
+                left: 46%;
+                font-size: 3.5em;
+                transform: rotate(-7deg);
+                top: 33%;
+            }
+            .text-result.d20{
+                left: 55%;
+                top: 40%;
+                transform: rotate3d(0.2, 1, 1, -40deg);
+            }
+
+            .show-result {
+                opacity: 1;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.js"></script>
+        <!-- <div id="canvas-box">
+            <h1  class="text-result" id="text-result">1</h1>
+        </div> -->
+        <button id="btn" onclick="startRolling(event)">go</button>
+        <script src="main.js"></script>
+        
+        
+    </body>
+</html>

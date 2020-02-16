@@ -1,76 +1,800 @@
-<html>
-    <head>
-        <title>My first Three.js app</title>
-        <style>
-            body {
-                display: flex;
-                width: 600px;
-                flex-flow: wrap;
-            }
-            canvas { width: 100%; height: 100% }
-            .canvas-box{
-                width:fit-content; 
-                position:relative;
-            }
+<head>
+</head>
+<body>
+<div id="dice">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.js"></script>
+  <style>
+    .dice-body {
+      max-width: 600px;
+      margin: auto;
+      min-height: 600px;
+    }
 
-            .text-result {
-                width:fit-content; 
-                position: absolute; 
-                color: white; 
-                left:50%; 
-                top:30%;
-                opacity: 0;
-                margin:0;
-                transition: opacity 0.5s;
-            }
+    hr {
+      border-color: #b50004;
+    }
 
-            .text-result.d4{
-                left: 38%;
-                transform: rotate3d(0.8, 1, 0.7, 55deg);
-                font-size: 52px;
-                top: 20%;
-            }
-            .text-result.d6 {
-                left: 46%;
-                top: 26%;
-            }
-            .text-result.d8{
-                left: 44%;
-                transform: rotate3d(1, 0, 0, 15deg);
-                font-size: 50px;
-                top: 18%;
-            }
-            .text-result.d10{
-                left: 48%;
-                font-size: 3em;
-                top: 23%;
-                transform:rotate(79deg);
-            }
-            .text-result.d12 {
-                left: 46%;
-                font-size: 3.5em;
-                transform: rotate(-7deg);
-                top: 23%;
-            }
-            .text-result.d20{
-                left: 55%;
-                top: 28%;
-                transform: rotate3d(0.2, 1, 1, -40deg);
-            }
+    #img-box {
+      display: flex;
+      width: fit-content;
+      margin: auto;
+      cursor: pointer;
+    }
 
-            .show-result {
-                opacity: 1;
+    .button {
+      padding: 0.5em 1em;
+      border: 1px solid #b50004;
+      width: fit-content;
+      height: fit-content;
+      margin-top: 2.5em;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      color: #fff;
+      background-color: #b50004;
+    }
+
+    .holder-div {
+      text-align: center;
+    }
+
+    .img-div {
+      border-radius: 50%;
+      background-color: #b5000400;
+      background: radial-gradient(circle, rgba(181, 0, 4, 0.0) 0%, rgba(255, 255, 255, 0) 00%);
+    }
+
+    .img-div:hover {
+      background-color: #b5000450;
+      background: radial-gradient(circle, rgba(181, 0, 4, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+      /* transition:  2s; */
+    }
+
+    .custom-dice {
+      padding: 0.2em 0.5em;
+      margin: auto;
+      border: 1px solid black;
+      a
+    }
+
+    #custom-input {
+      width: 2em;
+      margin: 0.2em;
+      text-align: center;
+    }
+
+    #custom-input:active,
+    #custom-input:focus {
+      outline: #b50004 auto 1px;
+    }
+
+    .buttons-box {
+      display: flex;
+      margin: auto;
+      height: 6em;
+      width: 66%;
+      justify-content: space-around;
+    }
+
+    .modifier {
+      display: inline-block;
+    }
+
+    .modifier.number {
+      width: 1.5em;
+    }
+
+    .arrow {
+      padding: 0em 1em;
+      cursor: pointer;
+    }
+
+    .arrow,
+    .number {
+      font-size: x-large;
+      font-weight: 800;
+    }
+
+    .arrow:hover {
+      background-color: #b50004;
+      background: radial-gradient(circle, rgba(181, 0, 4, 0.6) 0%, rgba(255, 255, 255, 0.3393732492997199) 30%);
+    }
+
+    .hide {
+      display:none;
+    }
+
+    .selector {
+      cursor: pointer;
+      /* //border: 1px outset black; */
+      border-radius: 50%;
+      text-align: center;
+      width: 1.5em;
+      margin: 0.5em;
+      z-index: 10;
+    }
+
+    .selector:hover {
+      background-color: #b50004;
+      background: radial-gradient(circle, rgba(181, 0, 4, 0.6) 0%, rgba(255, 255, 255, 0.3393732492997199) 60%);
+    }
+
+    .title-row,
+    title-box {
+      background-color: #fff;
+      animation: none;
+      z-index: 5;
+    }
+
+    .row {
+      border-bottom: 1px solid #b50004;
+      text-align: center;
+      display: flex;
+      position: relative;
+      flex-basis: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+
+    }
+
+    .row.slide {
+      animation: slideDown 0.7s;
+    }
+
+    .table {
+      width: 400px;
+      margin: auto;
+    }
+
+    .cell {
+      display: inline-block;
+    }
+
+    .cell.d-name {
+      width: 33%;
+      font-size: x-large;
+      font-weight: 800;
+      line-height: 3em;
+    }
+
+    .cell.d-quantity {
+      font-size: x-large;
+      font-weight: 800;
+      line-height: 3em;
+    }
+
+    .cell.d-quantity-select {
+      display: flex;
+    }
+
+    .d-results {
+      line-height: 4em;
+      width: 33%;
+    }
+
+    #result-box {
+      max-width: 600px;
+      padding: 1em;
+    }
+
+    .cell.d-name.title,
+    .d-results.title,
+    .title {
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: bold;
+    }
+
+    @keyframes slideDown {
+      from {
+        top: -2.5em;
+        opacity: 0;
+      }
+
+      to {
+        top: 0;
+        opacity: 1;
+      }
+    }
+
+    @media only screen and (max-width: 600px) {
+      .dice-body {
+        max-width: 95vw;
+      }
+
+      .arrow,
+      .number {
+        font-size: medium;
+      }
+
+      .buttons-box {
+        width: fit-content;
+      }
+
+      #custom-input {
+        border: 1px solid black;
+      }
+
+      #img-box {
+        display: flex;
+        flex-wrap: wrap;
+        width: fit-content;
+        margin: auto;
+        justify-content: space-evenly;
+        cursor: pointer;
+      }
+    }
+
+    /* ANIMATED DICE */
+    .animation-window{
+      display: flex;
+      flex-wrap: wrap;
+    }
+    canvas { width: 100%; height: 100% }
+    .canvas-box{
+        width:fit-content;
+        height:fit-content; 
+        position:relative;
+    }
+
+    .text-result {
+        width:fit-content; 
+        position: absolute; 
+        color: white; 
+        left:50%; 
+        top:30%;
+        opacity: 0;
+        margin:0;
+        transition: opacity 0.5s;
+    }
+
+    .text-result.d4{
+        left: 38%;
+        transform: rotate3d(0.8, 1, 0.7, 55deg);
+        font-size: 52px;
+        top: 32%;
+    }
+    .text-result.d6 {
+        left: 46%;
+        top: 33%;
+        font-size:3.5em;
+    }
+    .text-result.d8{
+        left: 44%;
+        transform: rotate3d(1, 0, 0, 15deg);
+        font-size: 50px;
+        top: 25%;
+    }
+    .text-result.d10{
+        left: 48%;
+        font-size: 3em;
+        top: 33%;
+        transform:rotate(79deg);
+    }
+    .text-result.d12 {
+        left: 46%;
+        font-size: 3.5em;
+        transform: rotate(-7deg);
+        top: 33%;
+    }
+    .text-result.d20{
+        left: 55%;
+        top: 40%;
+        transform: rotate3d(0.2, 1, 1, -40deg);
+    }
+    .show-result {
+        opacity: 1;
+    }
+  </style>
+      <div class="dice-body">
+        <div class="title-box">
+          <h1 class="main-title">DICE SIMULATOR</h1>
+          <p>Click on the dice to select.</p>
+          <div id="img-box"></div>
+          <div class="buttons-box">
+            <div class="button" id="reset-button" onclick="reset(event)">reset</div>
+            <div class="modifier-box">
+              <div class="title">Modifier</div>
+              <div class="modifier arrow" id="modifier-down" onclick="modifierChange(event)"><</div>
+              <div class="modifier number" id="modifier">0</div>
+              <div class="modifier arrow" id="modifier-up" onclick="modifierChange(event)">></div>
+            </div>
+            <div class="button" id="button" onclick="roll(event)">roll</div>
+            <div class="button hide" id="undo-button" onclick="removeLastRollResults()">undo</div>
+        </div>
+        <div class="animation-window" id="animations"></div>
+        <div class="table" id="dice-table">
+
+          <div class="row title-row">
+            <div class="cell d-name title">dice</div>
+            <div class="cell d-quantity-select title">
+              number
+            </div>
+            <div class="d-results title">results</div></div>
+        </div>
+        <div id="result-box">
+
+        </div>
+      </div>
+
+      <script>
+        class DiceRoller{
+          constructor() {
+            this._diceRows = {}
+            this._resultsText = [];
+            this._scenes = {};
+          }
+
+          addRow(){
+
+          }
+        }
+        let DICE_ROWS = {};
+        let RESULTS_TEXT = [];
+        let SCENES = {};
+
+        class Dice {
+          constructor(type, color = 0xb50004) {
+              this.color = color;
+              this.type = type;
+              this.spin = false;
+              this.showAnswer = false;
+              this.axes = {
+                  x: Math.random() * 10,
+                  y: Math.random() * 10,
+                  z: Math.random() * 10
+              };
+              
+              this.geometry = this.createGeometry(type)
+              this.element = this.createDice();
+          }
+          shapes = {
+              4: THREE.TetrahedronGeometry,
+              6: THREE.BoxGeometry,
+              8: THREE.OctahedronGeometry,
+              10: this.createD10,
+              12: THREE.DodecahedronGeometry,
+              20: THREE.IcosahedronGeometry,
+          }
+          finalStates = {
+              4: {
+                  x:0.9,
+                  y:-0.8,
+                  z:-0.2
+              },
+              6: {
+                  x:0,
+                  y:0,
+                  z:0
+              },
+              8: {
+                  x:0.5,
+                  y:0.8,
+                  z:0
+              },
+              10: {
+                  x:-0.6,
+                  y:-1.9,
+                  z:0
+              },
+              12: {
+                  x:1,
+                  y:0.7,
+                  z:0.3
+              },
+              20: {
+                  x:0.18,
+                  y:-0.12,
+                  z:-0.085
+              }
+          }
+          createGeometry(type){
+              let geometry;
+              if (type == 6) {
+                  geometry = new this.shapes[type](500, 500, 500, 10, 10, 10);             
+              } else if (type == 10) {
+                  geometry = this.shapes[type]();
+              } else {
+                  geometry = new this.shapes[type](500);  
+              }
+              return geometry;
+          }
+
+          createDice(){
+              const material = new THREE.MeshPhongMaterial({
+                  color: this.color,
+                  wireframe: false,
+                  opacity: 0.8,
+                  side: THREE.DoubleSide,
+                  vertexColors:THREE.FaceColors,
+                  flatShading: true,
+              });    
+
+              const dice = new THREE.Mesh(this.geometry, material);
+
+              return dice;
+          }
+
+          updateElementRotation() {
+              for (let a in this.axes){
+                  this.element.rotation[a] = this.axes[a];
+              }
+          }
+
+          reduceRotationAllAxes(speed) {
+              let stopSpinning = true;     
+              for (let a in this.axes){
+                  let axis = this.axes[a];
+                  const finalState = this.finalStates[this.type][a];
+                  let difference = (axis - finalState) / 75;
+                  if (difference < 0.005) difference = 0.005
+                  if (axis - difference > finalState) {
+                      this.axes[a] = axis - difference;
+                  } else {
+                      this.axes[a] = finalState;
+                  }
+                  if (this.axes[a] != finalState) stopSpinning = false;
+              }
+              this.updateElementRotation();
+              this.spin = !stopSpinning;
+              this.showAnswer = stopSpinning;
+          }
+          createCanvas() {
+              const ctx = document.createElement('canvas').getContext('2d');
+              ctx.canvas.width = 100;
+              ctx.canvas.height = 100;
+              ctx.fillStyle = '#FFF';
+              ctx.font = "150px Arial";
+              ctx.fillText("1",50,50);
+              // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+              const texture = new THREE.CanvasTexture(ctx.canvas);
+              return texture;
+          }
+
+          createD10() {
+              let vertices = [];
+              
+              vertices.push(...[0, 0, -1]);
+              for (let i = 0, b = 0; i < 10; ++i, b += Math.PI * 2 / 10) {
+                  vertices.push(...[Math.cos(b), Math.sin(b), 0.105 * (i % 2 ? 1 : -1)]);
+              }      
+              vertices.push(...[0, 0, 1]);        
+
+              const faces = [
+                  1,2,11, 2,3,11, 3,4,11, 4,5,11, 5,6,11, 6,7,11, 7,8,11, 8,9,11, 9,10,11, 10,1,11, 
+                  1,2,0, 2,3,0, 3,4,0, 4,5,0, 5,6,0, 6,7,0, 7,8,0, 8,9,0, 9,10,0, 10,1,0
+                  ];
+
+              return new THREE.PolyhedronGeometry(vertices, faces, 500, 0);
+          }          
+      }
+
+        class DiceScene{
+          constructor(parentElement, diceType, result=1, id=0){
+              this.id = id,
+              this.result = result,
+              this.parent = parentElement;
+              this.type = diceType;
+              this.scene = this.createScene();
+              this.camera = this.createCamera();
+              this.renderer = this.createRenderer();        
+              this.canvasBox = this.createCanvasBox();
+              this.resultText = this.canvasBox.firstElementChild;
+              this.canvasBox.append(this.renderer.domElement);
+              this.dice = new Dice(diceType);
+              this.scene.add(this.dice.element);
+
+          }
+          createCanvasBox() {
+              const canvasBox = document.createElement('div');
+              canvasBox.classList = "canvas-box";
+              canvasBox.setAttribute('id', `canvas-box-${this.id}`);
+              const text  = document.createElement('h1');
+              text.classList = `text-result d${this.type} `;
+              text.innerText = this.result;
+              canvasBox.append(text);
+              this.parent.append(canvasBox);
+              return canvasBox;
+          }
+          createCamera() {
+              let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+              camera.position.z = 800;
+              return camera;
+          }
+          createRenderer(){
+              var renderer = new THREE.WebGLRenderer();
+              var windowWidth=window.innerWidth;
+              renderer.setSize(windowWidth / 8, windowWidth/8);
+              renderer.domElement.id = 'dice-canvas';
+              return renderer;
+          }
+          createScene() {
+              let scene = new THREE.Scene();
+              var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+              directionalLight.position.x = -5000;
+              var bottomLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+              bottomLight.position.x = 500;
+              bottomLight.position.z = 500;
+              scene.background = new THREE.Color( 0xffffff );
+              scene.add(directionalLight);
+              scene.add(bottomLight);
+              return scene;
+          }
+
+          setResult(result) {
+              this.result = result;
+              this.resultText.innerText = this.result;
+          }
+
+          showResult() {
+              let classList = this.resultText.classList.value;
+              if (classList.indexOf('show-result') === -1) {
+                  this.resultText.classList.add('show-result');
+              }
+          }
+
+          render = () => {
+              requestAnimationFrame(this.render);
+              this.renderer.render(this.scene, this.camera);
+              if (this.dice.spin) {
+                  this.dice.reduceRotationAllAxes();
+              } else {
+                  if (this.dice.showAnswer) this.showResult();
+              }
+          }
+      }
+
+        const dr = new DiceRoller();
+        const start = () => {
+          const diceImgs = {
+            d4: "https://i.ibb.co/prMXn50/d3.png",
+            d6: "https://i.ibb.co/Ryrj90S/d6.png",
+            d8: "https://i.ibb.co/8rv3NsZ/d8.png",
+            d10: "https://i.ibb.co/H2ZXR6w/d10.png",
+            d12: "https://i.ibb.co/zs6scnM/d10.png",
+            d20: "https://i.ibb.co/j8Vws4B/d20.png",
+            d100: "https://i.ibb.co/DMsxyk8/d100.png"
+          }
+          const diceBox = (text, imgUrl) => {
+            const holderDiv = document.createElement('div');
+            holderDiv.classList = ("holder-div title");
+            holderDiv.setAttribute("id", `${text}-button`);
+            holderDiv.setAttribute("onclick", `diceClickHandler(event)`);
+            const diceName = document.createElement('div');
+            diceName.classList.add("dicename-div");
+            diceName.setAttribute("id", `${text}-text`);
+            const imgDiv = document.createElement('div');
+            imgDiv.classList.add("img-div");
+            imgDiv.setAttribute("id", `${text}-img-div`);
+            const imgEl = document.createElement('img');
+            imgEl.setAttribute("src", imgUrl);
+            imgEl.setAttribute("id", `${text}-img`);
+            diceName.innerText = text;
+            holderDiv.append(diceName);
+            imgDiv.append(imgEl);
+            holderDiv.append(imgDiv);
+            return holderDiv;
+          }
+          const imgBox = document.getElementById('img-box');
+          for (let d in diceImgs) {
+            imgBox.append(diceBox(d, diceImgs[d]));
+          }
+          //add custom dice
+          const holderDiv = document.createElement('div');
+          holderDiv.classList = ("holder-div title");
+          const imgDiv = document.createElement('div');
+          imgDiv.classList.add("img-div");
+          imgDiv.setAttribute("id", `custom-img-div`);
+          const customInput = document.createElement('input');
+          customInput.setAttribute("id", `custom-input`);
+          customInput.setAttribute("onchange", "customDiceOnChange(event)");
+          imgDiv.append(customInput);
+          const diceName = document.createElement('div');
+          diceName.classList = "dicename-div custom-dicename";
+          diceName.setAttribute("id", `custom-text`);
+          diceName.innerText = "d?";
+          const addButton = document.createElement('div');
+          addButton.classList = "button custom-dice";
+          addButton.innerText = "add"
+          addButton.setAttribute("onclick", `diceClickHandler(event)`);
+          addButton.setAttribute("id", `d?`);
+          holderDiv.append(diceName);
+          holderDiv.append(imgDiv);
+          holderDiv.append(addButton)
+
+          imgBox.append(holderDiv);
+        }
+
+        function modifierChange(e) {
+          const upDown = e.target.id.split('-')[1];
+          let modEl = document.getElementById('modifier');
+          if (upDown === 'up') modEl.innerText++;
+          if (upDown === 'down') modEl.innerText--;
+        }
+
+        const addDice = (diceName) => {
+          const quantityDisplay = document.getElementById(`${diceName}-quantity`);
+          DICE_ROWS[diceName].quantity++;
+          quantityDisplay.innerText = DICE_ROWS[diceName].quantity;
+        }
+        const minusDice = (diceName) => {
+          if (DICE_ROWS[diceName] == 0) return;
+          const quantityDisplay = document.getElementById(`${diceName}-quantity`);
+          DICE_ROWS[diceName].quantity--;
+          quantityDisplay.innerText = DICE_ROWS[diceName].quantity;
+        }
+
+
+        function addRow(diceName) {
+          const rowDiv = document.createElement('div');
+          rowDiv.classList = `row slide ${diceName}`;
+          const innerHtml = `
+    <div class="cell d-name">${diceName}</div>
+    <div class="cell d-quantity-select">
+      <div class="cell d-quantity" id="${diceName}-quantity">1</div>
+      <div class="cell d-select">
+        <div class="selector dice" onclick="arrowClick(event)" id="${diceName}-up">
+            /\\
+          </div>
+          <div class="selector dice" onclick="arrowClick(event)" id="${diceName}-down">
+            \\/
+          </div>
+      </div>
+    </div>
+    <div class="d-results" id="${diceName}-results"></div>`
+          rowDiv.innerHTML = innerHtml;
+          document.getElementById("dice-table").append(rowDiv);
+        }
+
+        function arrowClick(e) {
+          const idArray = e.target.id.split("-");
+          const diceName = idArray[0];
+          const upDown = idArray[1];
+          if (upDown === "up") addDice(diceName);
+          if (upDown === "down") minusDice(diceName);
+        }
+
+        function diceClickHandler(e) {
+          const diceName = e.target.id.split("-")[0];
+          if (isNaN(diceName.slice(1, ))) {
+            alert(`${diceName} isn't a dice`);
+            return;
+          }
+          if (diceName in DICE_ROWS) {
+            addDice(diceName);
+          } else {
+            DICE_ROWS[diceName] = {
+              quantity: 1
+            };
+            addRow(diceName);
+          }
+        }
+
+        function customDiceOnChange(e) {
+          const string = e.srcElement.value;
+          if (isNaN(string)) {
+            alert("Please enter a number");
+            return;
+          }
+          const diceNumber = document.getElementsByClassName('custom-dicename')[0];
+          document.getElementsByClassName('custom-dice')[0].setAttribute("id", `d${string}`);
+          diceNumber.innerText = `d${string}`;
+        }
+
+
+
+        function changeNumber(e) {
+          const el = e.target;
+          const rowEl = e.target.parentNode.parentNode;
+          const childIndex = el.className == 'selector dice' ? 2 : 4;
+          const numberCell = rowEl.children[childIndex];
+
+          if (el.innerText == '/\\') numberCell.innerText++;
+          if (el.innerText == '\\/') numberCell.innerText--;
+        }
+
+        function roll() {
+          const diceObj = getDiceObject();
+          console.log(diceObj);
+          if (Object.keys(diceObj).length === 0 && diceObj.constructor === Object) {
+            alert('Please select dice to roll');
+            return;
+          }
+          for (let d in diceObj) {
+            let currentDice = diceObj[d];
+            let diceCount = 0;
+            while (diceCount < currentDice.quantity) {
+              currentDice.results.push(Math.ceil(Math.random() * currentDice.value));
+              diceCount++;
             }
-        </style>
-        
-    </head>
-    <body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.js"></script>
-        <!-- <div id="canvas-box">
-            <h1  class="text-result" id="text-result">1</h1>
-        </div> -->
-        <script src="main.js"></script>
-        
-        
-    </body>
-</html>
+            diceObj[d] = currentDice;
+          }
+          applyResults(diceObj);
+          let undoButton = document.getElementById('undo-button');
+          undoButton.classList = "button";
+
+        }
+
+        function reset() {
+          console.log('reset');
+          var rows = document.getElementsByClassName('row slide');
+          for (let i = rows.length - 1; i >= 0 ; i--) {
+            rows[i].parentNode.removeChild(rows[i]);
+          }
+          DICE_ROWS = {};
+
+          RESULTS_TEXT = [];
+          let resultBox = document.getElementById('result-box');
+          resultBox.innerText = '';
+          let undoButton = document.getElementById('undo-button');
+          undoButton.classList = "button hide";
+        }
+
+        const applyResults = (diceObj) => {
+          const allResultsBox = document.getElementById("result-box");
+          const modifier = document.getElementById("modifier").innerText;
+          let resultsString = '';
+          let grandTotal = 0;
+          for (let d in diceObj) {
+            let total = 0;
+            let currentDice = diceObj[d];
+            let resultsBox = document.getElementById(`${d}-results`);
+            resultsBox.innerText = currentDice.results;
+            resultsString += `${d}: `
+            currentDice.results.forEach((r) => {
+              if (r == 20) {
+                resultsString += `<strong style="color:#b50004">${r}</strong> `;
+              } else {
+                resultsString += `${r} `;
+              }
+              total += r;
+            })
+
+            if (currentDice.results.length > 1) {
+              resultsString += `<br> Total: ${total} <br> `
+            } else {
+              resultsString += `<br>`;
+            }
+            grandTotal += total;
+          }
+          if (modifier) resultsString += `<br>Modifier: ${modifier}\n`
+          resultsString += `<br><strong>Grand Total: ${parseInt(grandTotal) + parseInt(modifier)}</strong> <hr>\n`;
+          RESULTS_TEXT.unshift(resultsString);
+          allResultsBox.innerHTML = RESULTS_TEXT.join("");
+        }
+
+        const removeLastRollResults = () =>{
+          const allResultsBox = document.getElementById("result-box");
+          RESULTS_TEXT.shift();
+          allResultsBox.innerHTML = RESULTS_TEXT.join("");
+        }
+
+        const getDiceObject = () => {
+          for (let d in DICE_ROWS) {
+            let dValue = parseInt(d.slice(1, )); {}
+            DICE_ROWS[d].value = dValue;
+            DICE_ROWS[d].results = [];
+          }
+          return DICE_ROWS;
+        }
+
+        const updateAnimatedDice = () => {
+          const animationBox = document.getElementById('animations');
+          for (let d in DICE_ROWS){
+            const diceNumber = parseInt(d.slice(1,));
+            const scenesSoFar = SCENES[d] || [];
+            if (scenesSoFar.length < DICE_ROWS[d].quantity){
+              let scene = new DiceScene(animationBox,diceNumber);
+              scene.render();
+              let scenesArray = SCENES[d] || [];
+              scenesArray.push(scene);
+              SCENES[d] = scenesArray;
+            }
+          }
+        }
+
+        start();
+      </script>
+    </div>
+  </body>

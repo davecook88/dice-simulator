@@ -1,8 +1,9 @@
 class Dice {
-    constructor(type, color = 0xfffff) {
+    constructor(type, color = 0xb50004) {
         this.color = color;
         this.type = type;
-        this.spin = true;
+        this.spin = false;
+        this.showAnswer = false;
         this.axes = {
             x: Math.random() * 10,
             y: Math.random() * 10,
@@ -52,9 +53,6 @@ class Dice {
             z:-0.085
         }
     }
-    calculateTextureSize(approx) {
-        return Math.max(128, Math.pow(2, Math.floor(Math.log(approx) / Math.log(2))));
-    }
     createGeometry(type){
         let geometry;
         if (type == 6) {
@@ -103,7 +101,8 @@ class Dice {
             if (this.axes[a] != finalState) stopSpinning = false;
         }
         this.updateElementRotation();
-        this.spin = !stopSpinning
+        this.spin = !stopSpinning;
+        this.showAnswer = stopSpinning;
     }
     createCanvas() {
         const ctx = document.createElement('canvas').getContext('2d');
@@ -182,6 +181,7 @@ class DiceScene{
         var bottomLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
         bottomLight.position.x = 500;
         bottomLight.position.z = 500;
+        scene.background = new THREE.Color( 0xffffff );
         scene.add(directionalLight);
         scene.add(bottomLight);
         return scene;
@@ -205,7 +205,7 @@ class DiceScene{
         if (this.dice.spin) {
             this.dice.reduceRotationAllAxes();
         } else {
-            this.showResult()
+            if (this.dice.showAnswer) this.showResult();
         }
     }
 }
@@ -215,9 +215,14 @@ const sceneD8 = new DiceScene(document.body,8);
 const sceneD10 = new DiceScene(document.body,10);
 const sceneD12 = new DiceScene(document.body,12);
 const sceneD20 = new DiceScene(document.body,20);
-sceneD6.render();
-sceneD4.render();
-sceneD8.render();
-sceneD10.render();
-sceneD12.render();
-sceneD20.render();
+
+const scenes = [sceneD4,sceneD6,sceneD8,sceneD10,sceneD12,sceneD20]
+scenes.forEach(scene => {
+    scene.render();
+})
+
+const startRolling = () =>{
+    scenes.forEach(scene => {
+        scene.dice.spin = true;
+    })
+}
